@@ -1,0 +1,33 @@
+version: '3'
+services:
+  kinesis:
+    image: 'localstack/localstack'
+    ports:
+      - 4568:4568
+    environment:
+      SERVICES: 'kinesis'
+
+  producer:
+    depends_on:
+      - kinesis
+    build:
+      context: producer
+    environment:
+      KAFKA_SERVERS: kafka:9092
+      KAFKA_TOPIC: mytopic
+      DEVICES_AMOUNT: 10
+      DEVICES_TIMEOUT: 1000
+
+#  consumer:
+#    restart: on-failure
+#    depends_on:
+#      - kafka
+#      - cassandra
+#    build:
+#      context: consumer
+#    environment:
+#      KAFKA_SERVERS: kafka:9092
+#      KAFKA_TOPIC: mytopic
+#      CASSANDRA_SERVERS: cassandra
+#      CASSANDRA_PORT: 9042
+#      CASSANDRA_KEYSPACE: relay
